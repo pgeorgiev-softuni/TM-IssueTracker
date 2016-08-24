@@ -14,8 +14,10 @@ namespace TM_IssueTracker.Models
         [StringLength(2048)]
         public string Description { get; set; }
 
-        public ApplicationUser CreatedBy { get; set; }
+        [Required]
+        public string CreatedBy { get; set; }
 
+        [Required]
         public DateTime CreatedOn { get; set; }
 
         [Required]

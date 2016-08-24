@@ -181,6 +181,14 @@
     <Compile Include="Migrations\201608241428495_TableDefinitions.Designer.cs">
       <DependentUpon>201608241428495_TableDefinitions.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\201608241442087_Added Comment table.cs" />
+    <Compile Include="Migrations\201608241442087_Added Comment table.Designer.cs">
+      <DependentUpon>201608241442087_Added Comment table.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201608241445440_Changed Comment-CreatedBy to be string.cs" />
+    <Compile Include="Migrations\201608241445440_Changed Comment-CreatedBy to be string.Designer.cs">
+      <DependentUpon>201608241445440_Changed Comment-CreatedBy to be string.cs</DependentUpon>
+    </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\AccountViewModels.cs" />
     <Compile Include="Models\ApplicationDbContext.cs" />
@@ -267,6 +275,12 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\201608241428495_TableDefinitions.resx">
       <DependentUpon>201608241428495_TableDefinitions.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201608241442087_Added Comment table.resx">
+      <DependentUpon>201608241442087_Added Comment table.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201608241445440_Changed Comment-CreatedBy to be string.resx">
+      <DependentUpon>201608241445440_Changed Comment-CreatedBy to be string.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <PropertyGroup>
