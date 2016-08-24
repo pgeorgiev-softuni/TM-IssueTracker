@@ -6,13 +6,9 @@ using System.Web;
 
 namespace TM_IssueTracker.Models
 {
-    public class Issue
+    public class Comment
     {
         public int Id { get; set; }
-
-        [Required]
-        [StringLength(255)]
-        public string Title { get; set; }
 
         [Required]
         [StringLength(2048)]
@@ -20,17 +16,11 @@ namespace TM_IssueTracker.Models
 
         public ApplicationUser CreatedBy { get; set; }
 
-        [Required]
         public DateTime CreatedOn { get; set; }
 
         [Required]
-        public IssueState State { get; set; }
+        public int IssueId { get; set; }
 
-        [Required]
-        public int ProjectId { get; set; }
-
-        public Project Project { get; set; }
-
-        public IEnumerable<Comment> Comments { get; set; }
+        public Issue Issue { get; set; }
     }
 }

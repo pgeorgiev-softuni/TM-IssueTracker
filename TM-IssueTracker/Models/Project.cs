@@ -18,5 +18,7 @@ namespace TM_IssueTracker.Models
         public DateTime CreatedOn { get; set; }
 
         public ApplicationUser CreatedBy { get; set; }
+
+        public IEnumerable<Issue> Issues { get; set; }
     }
 }

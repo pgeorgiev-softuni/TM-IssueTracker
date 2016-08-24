@@ -177,10 +177,15 @@
     <Compile Include="Migrations\201608241320363_Initial.Designer.cs">
       <DependentUpon>201608241320363_Initial.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\201608241428495_TableDefinitions.cs" />
+    <Compile Include="Migrations\201608241428495_TableDefinitions.Designer.cs">
+      <DependentUpon>201608241428495_TableDefinitions.cs</DependentUpon>
+    </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\AccountViewModels.cs" />
     <Compile Include="Models\ApplicationDbContext.cs" />
     <Compile Include="Models\ApplicationUser.cs" />
+    <Compile Include="Models\Comment.cs" />
     <Compile Include="Models\Issue.cs" />
     <Compile Include="Models\IssueState.cs" />
     <Compile Include="Models\ManageViewModels.cs" />
@@ -259,6 +264,9 @@
   <ItemGroup>
     <EmbeddedResource Include="Migrations\201608241320363_Initial.resx">
       <DependentUpon>201608241320363_Initial.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201608241428495_TableDefinitions.resx">
+      <DependentUpon>201608241428495_TableDefinitions.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <PropertyGroup>
