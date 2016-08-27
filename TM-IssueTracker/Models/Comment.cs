@@ -21,8 +21,6 @@ namespace TM_IssueTracker.Models
         public DateTime CreatedOn { get; set; }
 
         [Required]
-        public int IssueId { get; set; }
-
         public Issue Issue { get; set; }
     }
 }

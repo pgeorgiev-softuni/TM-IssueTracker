@@ -21,6 +21,13 @@ namespace TM_IssueTracker.Models
         {
         }
 
+        protected override void OnModelCreating(DbModelBuilder modelBuilder)
+        {
+            modelBuilder.Entity<Issue>().HasRequired(a => a.CreatedBy).WithMany().WillCascadeOnDelete(false);
+            modelBuilder.Entity<Project>().HasRequired(a => a.CreatedBy).WithMany().WillCascadeOnDelete(true);
+            base.OnModelCreating(modelBuilder);
+        }
+
         public static ApplicationDbContext Create()
         {
             return new ApplicationDbContext();

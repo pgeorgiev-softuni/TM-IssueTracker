@@ -18,6 +18,7 @@ namespace TM_IssueTracker.Models
         [StringLength(2048)]
         public string Description { get; set; }
 
+        [Required]
         public ApplicationUser CreatedBy { get; set; }
 
         [Required]
@@ -27,8 +28,6 @@ namespace TM_IssueTracker.Models
         public IssueState State { get; set; }
 
         [Required]
-        public int ProjectId { get; set; }
-
         public Project Project { get; set; }
 
         public IEnumerable<Comment> Comments { get; set; }

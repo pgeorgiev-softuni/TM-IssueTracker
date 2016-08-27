@@ -10,5 +10,6 @@ namespace TM_IssueTracker
         {
             ConfigureAuth(app);
         }
+
     }
 }

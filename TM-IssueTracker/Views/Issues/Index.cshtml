@@ -1,4 +1,4 @@
-﻿@model IEnumerable<TM_IssueTracker.Models.Project>
+﻿@model IEnumerable<TM_IssueTracker.Models.Issue>
 
 @{
     ViewBag.Title = "Index";
@@ -12,13 +12,10 @@
 <table class="table">
     <tr>
         <th>
-            @Html.DisplayNameFor(model => model.Name)
+            @Html.DisplayNameFor(model => model.Title)
         </th>
         <th>
             @Html.DisplayNameFor(model => model.Description)
-        </th>
-        <th>
-            @Html.DisplayNameFor(model => model.CreatedBy.UserName)
         </th>
         <th>
             @Html.DisplayNameFor(model => model.CreatedOn)
@@ -29,13 +26,10 @@
 @foreach (var item in Model) {
     <tr>
         <td>
-            @Html.DisplayFor(modelItem => item.Name)
+            @Html.DisplayFor(modelItem => item.Title)
         </td>
         <td>
             @Html.DisplayFor(modelItem => item.Description)
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.CreatedBy.UserName)
         </td>
         <td>
             @Html.DisplayFor(modelItem => item.CreatedOn)

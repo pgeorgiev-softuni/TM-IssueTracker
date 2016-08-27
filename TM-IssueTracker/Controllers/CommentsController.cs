@@ -6,117 +6,111 @@ using System.Linq;
 using System.Net;
 using System.Web;
 using System.Web.Mvc;
-using TM_IssueTracker.Classes;
 using TM_IssueTracker.Models;
 
 namespace TM_IssueTracker.Controllers
 {
-    [AutoLoginAttribute]
-    public class ProjectsController : Controller
+    public class CommentsController : Controller
     {
         private ApplicationDbContext db = new ApplicationDbContext();
 
-        // GET: Projects
-        public ActionResult Index()
+        // GET: Comments
+        public ActionResult Index(int pid, int sid)
         {
-            return View(db.Projects.Include(p => p.CreatedBy).ToList());
+            return View(db.Comments.ToList());
         }
 
-        // GET: Projects/Details/5
+        // GET: Comments/Details/5
         public ActionResult Details(int? id)
         {
             if (id == null)
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
-            Project project = db.Projects.Find(id);
-            if (project == null)
+            Comment comment = db.Comments.Find(id);
+            if (comment == null)
             {
                 return HttpNotFound();
             }
-            return View(project);
+            return View(comment);
         }
 
-        // GET: Projects/Create
+        // GET: Comments/Create
         public ActionResult Create()
         {
-            var user = db.Users.Where(p => p.UserName == User.Identity.Name).FirstOrDefault();
-            return View(new Project() { CreatedOn = DateTime.Now, CreatedBy = user });
+            return View();
         }
 
-        // POST: Projects/Create
+        // POST: Comments/Create
         // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Create([Bind(Include = "Id,Name,Description,CreatedOn,CreatedBy")] Project project)
+        public ActionResult Create([Bind(Include = "Id,Description,CreatedBy,CreatedOn")] Comment comment)
         {
-            project.CreatedOn = DateTime.Now;
-
             if (ModelState.IsValid)
             {
-                
-                db.Projects.Add(project);
+                db.Comments.Add(comment);
                 db.SaveChanges();
                 return RedirectToAction("Index");
             }
 
-            return View(project);
+            return View(comment);
         }
 
-        // GET: Projects/Edit/5
+        // GET: Comments/Edit/5
         public ActionResult Edit(int? id)
         {
             if (id == null)
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
-            Project project = db.Projects.Find(id);
-            if (project == null)
+            Comment comment = db.Comments.Find(id);
+            if (comment == null)
             {
                 return HttpNotFound();
             }
-            return View(project);
+            return View(comment);
         }
 
-        // POST: Projects/Edit/5
+        // POST: Comments/Edit/5
         // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Edit([Bind(Include = "Id,Name,Description,CreatedOn")] Project project)
+        public ActionResult Edit([Bind(Include = "Id,Description,CreatedBy,CreatedOn")] Comment comment)
         {
             if (ModelState.IsValid)
             {
-                db.Entry(project).State = EntityState.Modified;
+                db.Entry(comment).State = EntityState.Modified;
                 db.SaveChanges();
                 return RedirectToAction("Index");
             }
-            return View(project);
+            return View(comment);
         }
 
-        // GET: Projects/Delete/5
+        // GET: Comments/Delete/5
         public ActionResult Delete(int? id)
         {
             if (id == null)
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
-            Project project = db.Projects.Find(id);
-            if (project == null)
+            Comment comment = db.Comments.Find(id);
+            if (comment == null)
             {
                 return HttpNotFound();
             }
-            return View(project);
+            return View(comment);
         }
 
-        // POST: Projects/Delete/5
+        // POST: Comments/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
         public ActionResult DeleteConfirmed(int id)
         {
-            Project project = db.Projects.Find(id);
-            db.Projects.Remove(project);
+            Comment comment = db.Comments.Find(id);
+            db.Comments.Remove(comment);
             db.SaveChanges();
             return RedirectToAction("Index");
         }

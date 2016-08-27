@@ -15,8 +15,13 @@ namespace TM_IssueTracker.Models
         public string Name { get; set; }
 
         [Required]
+        [StringLength(2048)]
+        public string Description { get; set; }
+
+        [Required]
         public DateTime CreatedOn { get; set; }
 
+        [Required]
         public ApplicationUser CreatedBy { get; set; }
 
         public IEnumerable<Issue> Issues { get; set; }
