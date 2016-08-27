@@ -17,6 +17,13 @@ namespace TM_IssueTracker.Controllers
     {
         private ApplicationDbContext db = new ApplicationDbContext();
 
+        protected void IncludeProject(int pid)
+        {
+            var project = db.Projects.Where(p => p.Id == pid).Include(p => p.CreatedBy).FirstOrDefault();
+            ViewBag.Project = project;
+            ViewBag.Issue = null;
+        }
+
         // GET: Projects
         public ActionResult Index()
         {
@@ -30,6 +37,7 @@ namespace TM_IssueTracker.Controllers
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
+            IncludeProject((int)id);
             Project project = db.Projects.Find(id);
             if (project == null)
             {
@@ -75,6 +83,7 @@ namespace TM_IssueTracker.Controllers
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
+            IncludeProject((int)id);
             ProjectViewModel project = db.Projects.Where(p => p.Id == id).Select(p => new ProjectViewModel() { Id = p.Id, Description = p.Description, Name = p.Name }).FirstOrDefault();
             if (project == null)
             {
@@ -109,6 +118,7 @@ namespace TM_IssueTracker.Controllers
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
+            IncludeProject((int)id);
             Project project = db.Projects.Find(id);
             if (project == null)
             {

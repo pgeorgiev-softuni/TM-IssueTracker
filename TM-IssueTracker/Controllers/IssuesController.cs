@@ -17,21 +17,34 @@ namespace TM_IssueTracker.Controllers
     {
         private ApplicationDbContext db = new ApplicationDbContext();
 
+        protected void IncludeProject(int pid, int? sid = null) {
+            var project = db.Projects.Where(p => p.Id == pid).Include(p => p.CreatedBy).FirstOrDefault();
+            ViewBag.Project = project;
+            if (sid != null)
+            {
+                var issue = db.Issues.Where(p => p.Id == sid).Include(p => p.CreatedBy).FirstOrDefault();
+                ViewBag.Issue = issue;
+            }
+            else {
+                ViewBag.Issue = null;
+            }
+        }
+
         // GET: Issues
         public ActionResult Index(int pid)
         {
-            var project = db.Projects.Where(p => p.Id == pid).Include(p => p.CreatedBy).FirstOrDefault();
-            ViewBag.Project = project;
+            IncludeProject(pid);
             return View(db.Issues.Include(p => p.Project).Where(p => p.Project.Id == pid).Include(p => p.CreatedBy));
         }
 
         // GET: Issues/Details/5
-        public ActionResult Details(int? id)
+        public ActionResult Details(int? id, int pid)
         {
             if (id == null)
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
+            IncludeProject(pid, id);
             Issue issue = db.Issues.Find(id);
             if (issue == null)
             {
@@ -41,8 +54,9 @@ namespace TM_IssueTracker.Controllers
         }
 
         // GET: Issues/Create
-        public ActionResult Create()
+        public ActionResult Create(int pid)
         {
+            IncludeProject(pid);
             return View();
         }
 
@@ -53,6 +67,7 @@ namespace TM_IssueTracker.Controllers
         [ValidateAntiForgeryToken]
         public ActionResult Create([Bind(Include = "Id,Title,Description")] IssueViewModel issue, int pid)
         {
+            IncludeProject(pid);
             if (ModelState.IsValid)
             {
                 var user = db.Users.Where(p => p.UserName == User.Identity.Name).FirstOrDefault();
@@ -79,12 +94,13 @@ namespace TM_IssueTracker.Controllers
         }
 
         // GET: Issues/Edit/5
-        public ActionResult Edit(int? id)
+        public ActionResult Edit(int? id, int pid)
         {
             if (id == null)
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
+            IncludeProject(pid, id);
             IssueViewModel issue = db.Issues.Where(p => p.Id == id).Select(p => new IssueViewModel() { Id = p.Id, Description = p.Description, Title = p.Title }).FirstOrDefault();
             if (issue == null)
             {
@@ -98,8 +114,9 @@ namespace TM_IssueTracker.Controllers
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Edit([Bind(Include = "Id,Title,Description")] IssueViewModel issue)
+        public ActionResult Edit([Bind(Include = "Id,Title,Description")] IssueViewModel issue, int pid)
         {
+            IncludeProject(pid);
             if (ModelState.IsValid)
             {
                 Issue iss = db.Issues.Where(p => p.Id == issue.Id).Include(p => p.Project).Include(p => p.CreatedBy).Include(p => p.State).Include(p => p.Comments).FirstOrDefault();
@@ -113,12 +130,13 @@ namespace TM_IssueTracker.Controllers
         }
 
         // GET: Issues/Delete/5
-        public ActionResult Delete(int? id)
+        public ActionResult Delete(int? id, int pid)
         {
             if (id == null)
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
+            IncludeProject(pid, id);
             Issue issue = db.Issues.Find(id);
             if (issue == null)
             {

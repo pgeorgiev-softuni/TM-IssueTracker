@@ -7,6 +7,7 @@ using System.Net;
 using System.Web;
 using System.Web.Mvc;
 using TM_IssueTracker.Models;
+using TM_IssueTracker.ViewModels;
 
 namespace TM_IssueTracker.Controllers
 {
@@ -14,19 +15,29 @@ namespace TM_IssueTracker.Controllers
     {
         private ApplicationDbContext db = new ApplicationDbContext();
 
+        protected void IncludeProjectAndIssue(int pid, int sid) {
+            var project = db.Projects.Where(p => p.Id == pid).Include(p => p.CreatedBy).FirstOrDefault();
+            ViewBag.Project = project;
+            var issue = db.Issues.Where(p => p.Id == sid).Include(p => p.CreatedBy).FirstOrDefault();
+            ViewBag.Issue = issue;
+        }
+
         // GET: Comments
         public ActionResult Index(int pid, int sid)
         {
-            return View(db.Comments.ToList());
+            IncludeProjectAndIssue(pid, sid);
+            var comms = db.Comments.Include(p => p.Issue).Where(p => p.Issue.Id == sid).ToList();
+            return View(comms);
         }
 
         // GET: Comments/Details/5
-        public ActionResult Details(int? id)
+        public ActionResult Details(int? id, int pid, int sid)
         {
             if (id == null)
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
+            IncludeProjectAndIssue(pid, sid);
             Comment comment = db.Comments.Find(id);
             if (comment == null)
             {
@@ -36,8 +47,9 @@ namespace TM_IssueTracker.Controllers
         }
 
         // GET: Comments/Create
-        public ActionResult Create()
+        public ActionResult Create(int pid, int sid)
         {
+            IncludeProjectAndIssue(pid, sid);
             return View();
         }
 
@@ -46,11 +58,25 @@ namespace TM_IssueTracker.Controllers
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Create([Bind(Include = "Id,Description,CreatedBy,CreatedOn")] Comment comment)
+        public ActionResult Create([Bind(Include = "Id,Description,CreatedBy")] CommentViewModel comment, int pid, int sid)
         {
+            IncludeProjectAndIssue(pid, sid);
             if (ModelState.IsValid)
             {
-                db.Comments.Add(comment);
+                var user = db.Users.Where(p => p.UserName == User.Identity.Name).FirstOrDefault();
+                var project = db.Projects.Where(p => p.Id == pid).FirstOrDefault();
+                var issue = db.Issues.Where(p => p.Id == sid).FirstOrDefault();
+
+                db.Comments.Add(
+                    new Comment()
+                    {
+                        CreatedBy = comment.CreatedBy,
+                        CreatedOn = DateTime.Now,
+                        Description = comment.Description,
+                        Issue = issue
+                    }
+                );
+
                 db.SaveChanges();
                 return RedirectToAction("Index");
             }
@@ -59,13 +85,14 @@ namespace TM_IssueTracker.Controllers
         }
 
         // GET: Comments/Edit/5
-        public ActionResult Edit(int? id)
+        public ActionResult Edit(int? id, int pid, int sid)
         {
             if (id == null)
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
-            Comment comment = db.Comments.Find(id);
+            IncludeProjectAndIssue(pid, sid);
+            CommentViewModel comment = db.Comments.Include(p => p.Issue).Where(p => p.Issue.Id == sid).Select(p => new CommentViewModel() { Id = p.Id, CreatedBy = p.CreatedBy, Description = p.Description }).FirstOrDefault();
             if (comment == null)
             {
                 return HttpNotFound();
@@ -78,11 +105,13 @@ namespace TM_IssueTracker.Controllers
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Edit([Bind(Include = "Id,Description,CreatedBy,CreatedOn")] Comment comment)
+        public ActionResult Edit([Bind(Include = "Id,Description,CreatedBy")] CommentViewModel comment, int pid, int sid)
         {
             if (ModelState.IsValid)
             {
-                db.Entry(comment).State = EntityState.Modified;
+                Comment cmt = db.Comments.Include(p => p.Issue).Where(p => p.Id == comment.Id).FirstOrDefault();
+                cmt.Description = comment.Description;
+                db.Entry(cmt).State = EntityState.Modified;
                 db.SaveChanges();
                 return RedirectToAction("Index");
             }
@@ -90,12 +119,13 @@ namespace TM_IssueTracker.Controllers
         }
 
         // GET: Comments/Delete/5
-        public ActionResult Delete(int? id)
+        public ActionResult Delete(int? id, int pid, int sid)
         {
             if (id == null)
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
+            IncludeProjectAndIssue(pid, sid);
             Comment comment = db.Comments.Find(id);
             if (comment == null)
             {

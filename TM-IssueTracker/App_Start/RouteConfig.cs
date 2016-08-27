@@ -26,9 +26,9 @@ namespace TM_IssueTracker
             );
 
             routes.MapRoute(
-                name: "Default",
+                name: "Projects",
                 url: "{controller}/{action}/{id}",
-                defaults: new { controller = "Home", action = "Index", id = UrlParameter.Optional }
+                defaults: new { controller = "Projects", action = "Index", id = UrlParameter.Optional }
             );
         }
     }

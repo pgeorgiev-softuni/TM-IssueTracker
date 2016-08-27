@@ -21,7 +21,7 @@
             </div>
             <div class="navbar-collapse collapse">
                 <ul class="nav navbar-nav">
-                    <li>@Html.ActionLink("Home", "Index", "Home")</li>
+                    <li>@Html.RouteLink("Projects", "Projects", new { controller = "Projects", action = "Index" })</li>
                     <li>@Html.ActionLink("About", "About", "Home")</li>
                     <li>@Html.ActionLink("Contact", "Contact", "Home")</li>
                 </ul>
@@ -30,6 +30,29 @@
         </div>
     </div>
     <div class="container body-content">
+        <br />
+        @Html.ActionLink("Projects", "Index", "Projects")
+        @if (ViewBag.Project != null)
+        {
+            @:/ @Html.RouteLink(string.Format("{0}", ((TM_IssueTracker.Models.Project)(ViewBag.Project)).Name), "Projects", new { controller = "Projects", action = "Details", id = ((TM_IssueTracker.Models.Project)(ViewBag.Project)).Id })            
+        }
+
+        @if (ViewContext.RouteData.Values["controller"].ToString() == "Issues" || ViewBag.Issue != null)
+        {
+            @:/ @Html.RouteLink(string.Format("Issues", ((TM_IssueTracker.Models.Project)(ViewBag.Project)).Name), "Issues", new { pid = ((TM_IssueTracker.Models.Project)(ViewBag.Project)).Id })
+        }
+
+        @if (ViewBag.Issue != null)
+        {
+            @:/ @Html.RouteLink(string.Format("{0}", ((TM_IssueTracker.Models.Issue)(ViewBag.Issue)).Title), "Issues", new { action = "Details", id = ((TM_IssueTracker.Models.Issue)(ViewBag.Issue)).Id, pid = ((TM_IssueTracker.Models.Project)(ViewBag.Project)).Id })
+        }
+
+        @if (ViewContext.RouteData.Values["controller"].ToString() == "Comments")
+        {
+            @:/ @Html.RouteLink("Comments", "Comments", new { pid = ((TM_IssueTracker.Models.Issue)(ViewBag.Issue)).Project.Id, sid = ((TM_IssueTracker.Models.Issue)(ViewBag.Issue)).Id })
+        }
+
+        <hr />
         @RenderBody()
         <hr />
         <footer>
