@@ -8,6 +8,7 @@ using System.Web;
 using System.Web.Mvc;
 using TM_IssueTracker.Classes;
 using TM_IssueTracker.Models;
+using TM_IssueTracker.ViewModels;
 
 namespace TM_IssueTracker.Controllers
 {
@@ -40,8 +41,7 @@ namespace TM_IssueTracker.Controllers
         // GET: Projects/Create
         public ActionResult Create()
         {
-            var user = db.Users.Where(p => p.UserName == User.Identity.Name).FirstOrDefault();
-            return View(new Project() { CreatedOn = DateTime.Now, CreatedBy = user });
+            return View();
         }
 
         // POST: Projects/Create
@@ -49,14 +49,18 @@ namespace TM_IssueTracker.Controllers
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Create([Bind(Include = "Id,Name,Description,CreatedOn,CreatedBy")] Project project)
+        public ActionResult Create([Bind(Include = "Id,Name,Description")] ProjectViewModel project)
         {
-            project.CreatedOn = DateTime.Now;
-
             if (ModelState.IsValid)
             {
-                
-                db.Projects.Add(project);
+                var user = db.Users.Where(p => p.UserName == User.Identity.Name).FirstOrDefault();
+
+                db.Projects.Add(new Project() {
+                    Name = project.Name,
+                    CreatedOn = DateTime.Now,
+                    CreatedBy = user,
+                    Description = project.Description
+                });
                 db.SaveChanges();
                 return RedirectToAction("Index");
             }
@@ -71,7 +75,7 @@ namespace TM_IssueTracker.Controllers
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
-            Project project = db.Projects.Find(id);
+            ProjectViewModel project = db.Projects.Where(p => p.Id == id).Select(p => new ProjectViewModel() { Id = p.Id, Description = p.Description, Name = p.Name }).FirstOrDefault();
             if (project == null)
             {
                 return HttpNotFound();
@@ -84,11 +88,14 @@ namespace TM_IssueTracker.Controllers
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Edit([Bind(Include = "Id,Name,Description,CreatedOn")] Project project)
+        public ActionResult Edit([Bind(Include = "Id,Name,Description")] ProjectViewModel project)
         {
             if (ModelState.IsValid)
             {
-                db.Entry(project).State = EntityState.Modified;
+                Project prj = db.Projects.Where(p => p.Id == project.Id).Include(p => p.CreatedBy).FirstOrDefault();
+                prj.Name = project.Name;
+                prj.Description = project.Description;
+                db.Entry(prj).State = EntityState.Modified;
                 db.SaveChanges();
                 return RedirectToAction("Index");
             }

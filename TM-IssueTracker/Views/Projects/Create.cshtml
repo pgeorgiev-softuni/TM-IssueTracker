@@ -1,4 +1,4 @@
-﻿@model TM_IssueTracker.Models.Project
+﻿@model TM_IssueTracker.ViewModels.ProjectViewModel
 
 @{
     ViewBag.Title = "Create";
@@ -30,9 +30,6 @@
                 @Html.ValidationMessageFor(model => model.Description, "", new { @class = "text-danger" })
             </div>
         </div>
-
-        @Html.HiddenFor(p => p.CreatedOn)
-        @Html.HiddenFor(p => p.CreatedBy)
 
 
 

@@ -4,9 +4,9 @@ using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Web;
 
-namespace TM_IssueTracker.Models
+namespace TM_IssueTracker.ViewModels
 {
-    public class Project
+    public class ProjectViewModel
     {
         public int Id { get; set; }
 
@@ -18,12 +18,5 @@ namespace TM_IssueTracker.Models
         [StringLength(2048)]
         public string Description { get; set; }
 
-        [Required]
-        public DateTime CreatedOn { get; set; }
-
-        [Required]
-        public ApplicationUser CreatedBy { get; set; }
-
-        public ICollection<Issue> Issues { get; set; }
     }
 }

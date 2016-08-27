@@ -30,6 +30,6 @@ namespace TM_IssueTracker.Models
         [Required]
         public Project Project { get; set; }
 
-        public IEnumerable<Comment> Comments { get; set; }
+        public ICollection<Comment> Comments { get; set; }
     }
 }

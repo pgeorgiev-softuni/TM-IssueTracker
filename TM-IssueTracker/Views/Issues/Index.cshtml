@@ -4,7 +4,9 @@
     ViewBag.Title = "Index";
 }
 
-<h2>Index</h2>
+<h2>Issues</h2>
+
+@Html.Partial("_ProjectPartial", (TM_IssueTracker.Models.Project)ViewBag.Project)
 
 <p>
     @Html.ActionLink("Create New", "Create")
@@ -16,6 +18,9 @@
         </th>
         <th>
             @Html.DisplayNameFor(model => model.Description)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.CreatedBy)
         </th>
         <th>
             @Html.DisplayNameFor(model => model.CreatedOn)
@@ -32,6 +37,9 @@
             @Html.DisplayFor(modelItem => item.Description)
         </td>
         <td>
+            @Html.DisplayFor(modelItem => item.CreatedBy.UserName)
+        </td>
+        <td>
             @Html.DisplayFor(modelItem => item.CreatedOn)
         </td>
         <td>
@@ -43,3 +51,6 @@
 }
 
 </table>
+<p>
+    @Html.ActionLink("Back to List", "Index")
+</p>

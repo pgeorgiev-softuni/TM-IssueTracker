@@ -6,10 +6,13 @@ using System.Linq;
 using System.Net;
 using System.Web;
 using System.Web.Mvc;
+using TM_IssueTracker.Classes;
 using TM_IssueTracker.Models;
+using TM_IssueTracker.ViewModels;
 
 namespace TM_IssueTracker.Controllers
 {
+    [AutoLoginAttribute]
     public class IssuesController : Controller
     {
         private ApplicationDbContext db = new ApplicationDbContext();
@@ -17,7 +20,9 @@ namespace TM_IssueTracker.Controllers
         // GET: Issues
         public ActionResult Index(int pid)
         {
-            return View(db.Issues.ToList());
+            var project = db.Projects.Where(p => p.Id == pid).Include(p => p.CreatedBy).FirstOrDefault();
+            ViewBag.Project = project;
+            return View(db.Issues.Include(p => p.Project).Where(p => p.Project.Id == pid).Include(p => p.CreatedBy));
         }
 
         // GET: Issues/Details/5
@@ -46,11 +51,26 @@ namespace TM_IssueTracker.Controllers
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Create([Bind(Include = "Id,Title,Description,CreatedOn")] Issue issue)
+        public ActionResult Create([Bind(Include = "Id,Title,Description")] IssueViewModel issue, int pid)
         {
             if (ModelState.IsValid)
             {
-                db.Issues.Add(issue);
+                var user = db.Users.Where(p => p.UserName == User.Identity.Name).FirstOrDefault();
+                var project = db.Projects.Where(p => p.Id == pid).FirstOrDefault();
+                var state = db.IssueStates.Where(p => p.Name == "New").FirstOrDefault();
+
+                db.Issues.Add(
+                    new Issue()
+                    {
+                        CreatedBy = user,
+                        CreatedOn = DateTime.Now,
+                        Title = issue.Title,
+                        Description = issue.Description,
+                        State = state,
+                        Project = project
+                    }
+                );
+
                 db.SaveChanges();
                 return RedirectToAction("Index");
             }
@@ -65,7 +85,7 @@ namespace TM_IssueTracker.Controllers
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
-            Issue issue = db.Issues.Find(id);
+            IssueViewModel issue = db.Issues.Where(p => p.Id == id).Select(p => new IssueViewModel() { Id = p.Id, Description = p.Description, Title = p.Title }).FirstOrDefault();
             if (issue == null)
             {
                 return HttpNotFound();
@@ -78,11 +98,14 @@ namespace TM_IssueTracker.Controllers
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Edit([Bind(Include = "Id,Title,Description,CreatedOn")] Issue issue)
+        public ActionResult Edit([Bind(Include = "Id,Title,Description")] IssueViewModel issue)
         {
             if (ModelState.IsValid)
             {
-                db.Entry(issue).State = EntityState.Modified;
+                Issue iss = db.Issues.Where(p => p.Id == issue.Id).Include(p => p.Project).Include(p => p.CreatedBy).Include(p => p.State).Include(p => p.Comments).FirstOrDefault();
+                iss.Title = issue.Title;
+                iss.Description = issue.Description;
+                db.Entry(iss).State = EntityState.Modified;
                 db.SaveChanges();
                 return RedirectToAction("Index");
             }
