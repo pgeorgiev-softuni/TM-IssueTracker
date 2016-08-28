@@ -35,11 +35,11 @@ namespace TM_IssueTracker.Controllers
 
         // GET: Issues
         [AllowAnonymous]
-        public ActionResult Index(int pid, int? state)
+        public ActionResult Index(int pid, int? state, string search)
         {
             IncludeProject(pid);
             var states = db.IssueStates.ToList();
-            states.Insert(0, new IssueState() { Id = 0, Name = "Any State" });
+            states.Insert(0, new IssueState() { Id = 0, Name = "All" });
             ViewBag.States = states;
 
             IEnumerable<TM_IssueTracker.Models.Issue> issues = null;
@@ -57,6 +57,10 @@ namespace TM_IssueTracker.Controllers
             {
                 ViewBag.StateId = 0;
                 issues = db.Issues.Include(p => p.Project).Include(p => p.State).Where(p => p.Project.Id == pid).Include(p => p.CreatedBy).ToList();
+            }
+
+            if (search != null && search != "") {
+                issues = issues.Where(p => p.Title.ToLower().IndexOf(search.ToLower()) >= 0);
             }
 
 

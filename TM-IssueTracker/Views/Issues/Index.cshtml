@@ -8,59 +8,75 @@
 <p>
     @Html.ActionLink("Create New", "Create")
 </p>
-<table class="table">
-    <tr>
-        <th>
-            @Html.DisplayNameFor(model => model.Title)
-        </th>
-        <th>
-            @Html.DisplayNameFor(model => model.Description)
-        </th>
-        <th>
-            @Html.DisplayNameFor(model => model.CreatedBy)
-        </th>
-        <th>
-            @Html.DisplayNameFor(model => model.CreatedOn)
-        </th>
-        <th>
-            @Html.DisplayNameFor(model => model.State)
-            @using (Html.BeginForm("Index", "Issues", FormMethod.Get))
+@using (Html.BeginForm("Index", "Issues", FormMethod.Get))
+{
+    <table class="table">
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.Title)
+                @Html.Editor("search", new { htmlAttributes = new { @class = "form-control", @style = "display: inline; width: 130px; height: 22px; padding: 1px 2px;" } })
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Description)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.CreatedBy)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.CreatedOn)
+            </th>
+            <th colspan="2">
+                @Html.DisplayNameFor(model => model.State)
+
+                @Html.DropDownList("State", new SelectList(ViewBag.States, "Id", "Name", ViewBag.StateId), new
+           {
+               onchange = "this.form.submit();",
+               @class = "form-control",
+               @style = "display: inline; width: 100px; padding: 1px 2px; height: 22px;"
+
+           })
+
+            </th>
+        </tr>
+        @{ string s = ""; }
+        @foreach (var item in Model)
+        {
+
+
+            switch (item.State.Id)
             {
-                @Html.DropDownList("State", new SelectList(ViewBag.States, "Id", "Name", ViewBag.StateId), new {
-                    onchange = "this.form.submit();"
-                })
+                case 1: { s = "rgba(191, 63, 63, 0.09)"; }; break;
+                case 2: { s = "rgba(76, 63, 191, 0.11)"; }; break;
+                case 3: { s = "rgba(63, 191, 80, 0.11)"; }; break;
+                case 4: { s = "rgba(176, 191, 63, 0.11)"; }; break;
             }
-        </th>
-        <th></th>
-    </tr>
 
-@foreach (var item in Model) {
-    <tr>
-        <td>
-            @Html.DisplayFor(modelItem => item.Title)
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.Description)
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.CreatedBy.UserName)
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.CreatedOn)
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.State.Name)
-        </td>
-        <td>
-            @Html.RouteLink("Comments", "Comments", new { pid = item.Project.Id, sid = item.Id }) |
-            @Html.ActionLink("Edit", "Edit", new { id=item.Id }) |
-            @Html.ActionLink("Details", "Details", new { id=item.Id }) |
-            @Html.ActionLink("Delete", "Delete", new { id=item.Id })
-        </td>
-    </tr>
+            <tr style="background-color: @s">
+                <td style="width: 230px;">
+                    @Html.DisplayFor(modelItem => item.Title)
+                </td>
+                <td style="width: 230px;">
+                    @Html.DisplayFor(modelItem => item.Description)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.CreatedBy.UserName)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.CreatedOn)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.State.Name)
+                </td>
+                <td>
+                    @Html.RouteLink("Comments", "Comments", new { pid = item.Project.Id, sid = item.Id }) |
+                    @Html.ActionLink("Edit", "Edit", new { id = item.Id }) |
+                    @Html.ActionLink("Details", "Details", new { id = item.Id }) |
+                    @Html.ActionLink("Delete", "Delete", new { id = item.Id })
+                </td>
+            </tr>
+        }        
+    </table>
 }
-
-</table>
-<p>
-    @Html.RouteLink("Back to Projects", "Projects", new { controller = "Projects", action = "Index" })
-</p>
+    <p>
+        @Html.RouteLink("Back to Projects", "Projects", new { controller = "Projects", action = "Index" })
+    </p>
