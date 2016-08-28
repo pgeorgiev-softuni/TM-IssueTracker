@@ -13,11 +13,13 @@ using TM_IssueTracker.ViewModels;
 namespace TM_IssueTracker.Controllers
 {
     [AutoLoginAttribute]
+    [Authorize(Roles = "admin")]
     public class IssuesController : Controller
     {
         private ApplicationDbContext db = new ApplicationDbContext();
 
-        protected void IncludeProject(int pid, int? sid = null) {
+        protected void IncludeProject(int pid, int? sid = null)
+        {
             var project = db.Projects.Where(p => p.Id == pid).Include(p => p.CreatedBy).FirstOrDefault();
             ViewBag.Project = project;
             if (sid != null)
@@ -25,19 +27,44 @@ namespace TM_IssueTracker.Controllers
                 var issue = db.Issues.Where(p => p.Id == sid).Include(p => p.CreatedBy).FirstOrDefault();
                 ViewBag.Issue = issue;
             }
-            else {
+            else
+            {
                 ViewBag.Issue = null;
             }
         }
 
         // GET: Issues
-        public ActionResult Index(int pid)
+        [AllowAnonymous]
+        public ActionResult Index(int pid, int? state)
         {
             IncludeProject(pid);
-            return View(db.Issues.Include(p => p.Project).Where(p => p.Project.Id == pid).Include(p => p.CreatedBy));
+            var states = db.IssueStates.ToList();
+            states.Insert(0, new IssueState() { Id = 0, Name = "Any State" });
+            ViewBag.States = states;
+
+            IEnumerable<TM_IssueTracker.Models.Issue> issues = null;
+
+            if (state == null) {
+                state = 0;
+            }
+
+            if ((int)state > 0)
+            {
+                ViewBag.StateId = state;
+                issues = db.Issues.Include(p => p.Project).Include(p => p.State).Where(p => p.Project.Id == pid && p.State.Id == state).Include(p => p.CreatedBy).ToList();
+            }
+            else
+            {
+                ViewBag.StateId = 0;
+                issues = db.Issues.Include(p => p.Project).Include(p => p.State).Where(p => p.Project.Id == pid).Include(p => p.CreatedBy).ToList();
+            }
+
+
+            return View(issues);
         }
 
         // GET: Issues/Details/5
+        [AllowAnonymous]
         public ActionResult Details(int? id, int pid)
         {
             if (id == null)
@@ -101,7 +128,9 @@ namespace TM_IssueTracker.Controllers
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
             IncludeProject(pid, id);
-            IssueViewModel issue = db.Issues.Where(p => p.Id == id).Select(p => new IssueViewModel() { Id = p.Id, Description = p.Description, Title = p.Title }).FirstOrDefault();
+            var states = db.IssueStates;
+            ViewBag.States = states;
+            IssueViewModel issue = db.Issues.Where(p => p.Id == id).Select(p => new IssueViewModel() { Id = p.Id, Description = p.Description, Title = p.Title, StateId = p.State.Id }).FirstOrDefault();
             if (issue == null)
             {
                 return HttpNotFound();
@@ -114,14 +143,16 @@ namespace TM_IssueTracker.Controllers
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Edit([Bind(Include = "Id,Title,Description")] IssueViewModel issue, int pid)
+        public ActionResult Edit([Bind(Include = "Id,Title,Description,StateId")] IssueViewModel issue, int pid)
         {
             IncludeProject(pid);
             if (ModelState.IsValid)
             {
+                IssueState state = db.IssueStates.Where(p => p.Id == issue.StateId).FirstOrDefault();
                 Issue iss = db.Issues.Where(p => p.Id == issue.Id).Include(p => p.Project).Include(p => p.CreatedBy).Include(p => p.State).Include(p => p.Comments).FirstOrDefault();
                 iss.Title = issue.Title;
                 iss.Description = issue.Description;
+                iss.State = state;
                 db.Entry(iss).State = EntityState.Modified;
                 db.SaveChanges();
                 return RedirectToAction("Index");

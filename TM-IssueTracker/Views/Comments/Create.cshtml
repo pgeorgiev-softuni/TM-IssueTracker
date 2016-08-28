@@ -22,7 +22,8 @@
                 @Html.ValidationMessageFor(model => model.Description, "", new { @class = "text-danger" })
             </div>
         </div>
-
+        @if (this.User.Identity.Name == "")
+        {
         <div class="form-group">
             @Html.LabelFor(model => model.CreatedBy, htmlAttributes: new { @class = "control-label col-md-2" })
             <div class="col-md-10">
@@ -30,6 +31,10 @@
                 @Html.ValidationMessageFor(model => model.CreatedBy, "", new { @class = "text-danger" })
             </div>
         </div>
+        }
+        else {
+            @Html.Hidden("CreatedBy", "AuthenticatedUser");
+        }
 
         <div class="form-group">
             <div class="col-md-offset-2 col-md-10">

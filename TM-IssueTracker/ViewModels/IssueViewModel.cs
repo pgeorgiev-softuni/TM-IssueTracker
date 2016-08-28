@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Web;
+using TM_IssueTracker.Models;
 
 namespace TM_IssueTracker.ViewModels
 {
@@ -17,6 +18,9 @@ namespace TM_IssueTracker.ViewModels
         [Required]
         [StringLength(2048)]
         public string Description { get; set; }
+
+        public byte StateId { get; set; }
+        public IEnumerable<IssueState> State { get; set; }
 
     }
 }

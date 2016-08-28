@@ -6,11 +6,14 @@ using System.Linq;
 using System.Net;
 using System.Web;
 using System.Web.Mvc;
+using TM_IssueTracker.Classes;
 using TM_IssueTracker.Models;
 using TM_IssueTracker.ViewModels;
 
 namespace TM_IssueTracker.Controllers
 {
+
+    [Authorize(Roles = "admin")]
     public class CommentsController : Controller
     {
         private ApplicationDbContext db = new ApplicationDbContext();
@@ -23,6 +26,7 @@ namespace TM_IssueTracker.Controllers
         }
 
         // GET: Comments
+        [AllowAnonymous]
         public ActionResult Index(int pid, int sid)
         {
             IncludeProjectAndIssue(pid, sid);
@@ -31,6 +35,7 @@ namespace TM_IssueTracker.Controllers
         }
 
         // GET: Comments/Details/5
+        [AllowAnonymous]
         public ActionResult Details(int? id, int pid, int sid)
         {
             if (id == null)
@@ -47,6 +52,7 @@ namespace TM_IssueTracker.Controllers
         }
 
         // GET: Comments/Create
+        [AllowAnonymous]
         public ActionResult Create(int pid, int sid)
         {
             IncludeProjectAndIssue(pid, sid);
@@ -58,6 +64,7 @@ namespace TM_IssueTracker.Controllers
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [AllowAnonymous]
         public ActionResult Create([Bind(Include = "Id,Description,CreatedBy")] CommentViewModel comment, int pid, int sid)
         {
             IncludeProjectAndIssue(pid, sid);
@@ -70,7 +77,7 @@ namespace TM_IssueTracker.Controllers
                 db.Comments.Add(
                     new Comment()
                     {
-                        CreatedBy = comment.CreatedBy,
+                        CreatedBy = user != null ? user.UserName : comment.CreatedBy,
                         CreatedOn = DateTime.Now,
                         Description = comment.Description,
                         Issue = issue

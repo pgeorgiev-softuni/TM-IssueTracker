@@ -22,6 +22,15 @@
         <th>
             @Html.DisplayNameFor(model => model.CreatedOn)
         </th>
+        <th>
+            @Html.DisplayNameFor(model => model.State)
+            @using (Html.BeginForm("Index", "Issues", FormMethod.Get))
+            {
+                @Html.DropDownList("State", new SelectList(ViewBag.States, "Id", "Name", ViewBag.StateId), new {
+                    onchange = "this.form.submit();"
+                })
+            }
+        </th>
         <th></th>
     </tr>
 
@@ -38,6 +47,9 @@
         </td>
         <td>
             @Html.DisplayFor(modelItem => item.CreatedOn)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.State.Name)
         </td>
         <td>
             @Html.RouteLink("Comments", "Comments", new { pid = item.Project.Id, sid = item.Id }) |

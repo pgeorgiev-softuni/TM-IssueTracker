@@ -17,7 +17,7 @@
                     <span class="icon-bar"></span>
                     <span class="icon-bar"></span>
                 </button>
-                @Html.ActionLink("Application name", "Index", "Home", new { area = "" }, new { @class = "navbar-brand" })
+                @Html.ActionLink("Issue Tracker", "Index", "Home", new { area = "" }, new { @class = "navbar-brand" })
             </div>
             <div class="navbar-collapse collapse">
                 <ul class="nav navbar-nav">
@@ -31,7 +31,7 @@
     </div>
     <div class="container body-content">
         <br />
-        @Html.ActionLink("Projects", "Index", "Projects")
+        @Html.ActionLink("Projects", "Index", "Projects", null, new { style = "font-weight: bold" })
         @if (ViewBag.Project != null)
         {
             @:/ @Html.RouteLink(string.Format("{0}", ((TM_IssueTracker.Models.Project)(ViewBag.Project)).Name), "Projects", new { controller = "Projects", action = "Details", id = ((TM_IssueTracker.Models.Project)(ViewBag.Project)).Id })            
@@ -39,7 +39,7 @@
 
         @if (ViewContext.RouteData.Values["controller"].ToString() == "Issues" || ViewBag.Issue != null)
         {
-            @:/ @Html.RouteLink(string.Format("Issues", ((TM_IssueTracker.Models.Project)(ViewBag.Project)).Name), "Issues", new { pid = ((TM_IssueTracker.Models.Project)(ViewBag.Project)).Id })
+            @:/ @Html.RouteLink(string.Format("Issues", ((TM_IssueTracker.Models.Project)(ViewBag.Project)).Name), "Issues", new { pid = ((TM_IssueTracker.Models.Project)(ViewBag.Project)).Id }, new { style = "font-weight: bold" })
         }
 
         @if (ViewBag.Issue != null)
@@ -49,14 +49,14 @@
 
         @if (ViewContext.RouteData.Values["controller"].ToString() == "Comments")
         {
-            @:/ @Html.RouteLink("Comments", "Comments", new { pid = ((TM_IssueTracker.Models.Issue)(ViewBag.Issue)).Project.Id, sid = ((TM_IssueTracker.Models.Issue)(ViewBag.Issue)).Id })
+            @:/ @Html.RouteLink("Comments", "Comments", new { pid = ((TM_IssueTracker.Models.Issue)(ViewBag.Issue)).Project.Id, sid = ((TM_IssueTracker.Models.Issue)(ViewBag.Issue)).Id }, new { style = "font-weight: bold" })
         }
 
         <hr />
         @RenderBody()
         <hr />
         <footer>
-            <p>&copy; @DateTime.Now.Year - My ASP.NET Application</p>
+            <p>&copy; @DateTime.Now.Year - SoftUni | TechModule | Issue Tracking System - By Petar Georgiev</p>
         </footer>
     </div>
 

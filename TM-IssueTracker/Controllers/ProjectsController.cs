@@ -12,7 +12,8 @@ using TM_IssueTracker.ViewModels;
 
 namespace TM_IssueTracker.Controllers
 {
-    [AutoLoginAttribute]
+    [AutoLogin]
+    [Authorize(Roles = "admin")]
     public class ProjectsController : Controller
     {
         private ApplicationDbContext db = new ApplicationDbContext();
@@ -25,12 +26,14 @@ namespace TM_IssueTracker.Controllers
         }
 
         // GET: Projects
+        [AllowAnonymous]
         public ActionResult Index()
         {
             return View(db.Projects.Include(p => p.CreatedBy).ToList());
         }
 
         // GET: Projects/Details/5
+        [AllowAnonymous]
         public ActionResult Details(int? id)
         {
             if (id == null)
@@ -57,6 +60,7 @@ namespace TM_IssueTracker.Controllers
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [Authorize]
         public ActionResult Create([Bind(Include = "Id,Name,Description")] ProjectViewModel project)
         {
             if (ModelState.IsValid)
