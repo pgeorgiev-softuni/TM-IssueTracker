@@ -30,7 +30,7 @@ namespace TM_IssueTracker.Controllers
         public ActionResult Index(int pid, int sid)
         {
             IncludeProjectAndIssue(pid, sid);
-            var comms = db.Comments.Include(p => p.Issue).Where(p => p.Issue.Id == sid).ToList();
+            var comms = db.Comments.Include(p => p.Issue).Where(p => p.Issue.Id == sid).OrderByDescending(p => p.CreatedOn).ToList();
             return View(comms);
         }
 

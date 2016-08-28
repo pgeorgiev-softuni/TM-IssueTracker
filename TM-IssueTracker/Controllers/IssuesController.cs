@@ -51,12 +51,12 @@ namespace TM_IssueTracker.Controllers
             if ((int)state > 0)
             {
                 ViewBag.StateId = state;
-                issues = db.Issues.Include(p => p.Comments).Include(p => p.Project).Include(p => p.State).Where(p => p.Project.Id == pid && p.State.Id == state).Include(p => p.CreatedBy).ToList();
+                issues = db.Issues.Include(p => p.Comments).Include(p => p.Project).Include(p => p.State).Where(p => p.Project.Id == pid && p.State.Id == state).Include(p => p.CreatedBy).OrderByDescending(p => p.CreatedOn).ToList();
             }
             else
             {
                 ViewBag.StateId = 0;
-                issues = db.Issues.Include(p => p.Comments).Include(p => p.Project).Include(p => p.State).Where(p => p.Project.Id == pid).Include(p => p.CreatedBy).ToList();
+                issues = db.Issues.Include(p => p.Comments).Include(p => p.Project).Include(p => p.State).Where(p => p.Project.Id == pid).Include(p => p.CreatedBy).OrderByDescending(p => p.CreatedOn).ToList();
             }
 
             if (search != null && search != "") {

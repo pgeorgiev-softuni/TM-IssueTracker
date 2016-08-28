@@ -31,7 +31,10 @@
     </div>
     <div class="container body-content">
         <br />
-        @Html.ActionLink("Projects", "Index", "Projects", null, new { style = "font-weight: bold" })
+        @if (ViewContext.RouteData.Values["controller"].ToString() != "Home")
+        {
+            @Html.ActionLink("Projects", "Index", "Projects", null, new { style = "font-weight: bold" })
+        }
         @if (ViewBag.Project != null)
         {
             @:/ @Html.RouteLink(string.Format("{0}", ((TM_IssueTracker.Models.Project)(ViewBag.Project)).Name), "Projects", new { controller = "Projects", action = "Details", id = ((TM_IssueTracker.Models.Project)(ViewBag.Project)).Id })            
