@@ -29,7 +29,9 @@ namespace TM_IssueTracker.Controllers
         [AllowAnonymous]
         public ActionResult Index()
         {
-            return View(db.Projects.Include(p => p.CreatedBy).ToList());
+            var projects = db.Projects.Include(p => p.CreatedBy).Include(p => p.Issues).ToList();
+            projects.ForEach(p => p.IssuesCount = p.Issues.AsQueryable().Count());
+            return View(projects);
         }
 
         // GET: Projects/Details/5

@@ -42,7 +42,7 @@ namespace TM_IssueTracker.Controllers
             states.Insert(0, new IssueState() { Id = 0, Name = "All" });
             ViewBag.States = states;
 
-            IEnumerable<TM_IssueTracker.Models.Issue> issues = null;
+            List<TM_IssueTracker.Models.Issue> issues = null;
 
             if (state == null) {
                 state = 0;
@@ -51,19 +51,21 @@ namespace TM_IssueTracker.Controllers
             if ((int)state > 0)
             {
                 ViewBag.StateId = state;
-                issues = db.Issues.Include(p => p.Project).Include(p => p.State).Where(p => p.Project.Id == pid && p.State.Id == state).Include(p => p.CreatedBy).ToList();
+                issues = db.Issues.Include(p => p.Comments).Include(p => p.Project).Include(p => p.State).Where(p => p.Project.Id == pid && p.State.Id == state).Include(p => p.CreatedBy).ToList();
             }
             else
             {
                 ViewBag.StateId = 0;
-                issues = db.Issues.Include(p => p.Project).Include(p => p.State).Where(p => p.Project.Id == pid).Include(p => p.CreatedBy).ToList();
+                issues = db.Issues.Include(p => p.Comments).Include(p => p.Project).Include(p => p.State).Where(p => p.Project.Id == pid).Include(p => p.CreatedBy).ToList();
             }
 
             if (search != null && search != "") {
-                issues = issues.Where(p => p.Title.ToLower().IndexOf(search.ToLower()) >= 0);
+                issues = issues.Where(p => p.Title.ToLower().IndexOf(search.ToLower()) >= 0).ToList();
             }
 
-
+            
+            issues.ForEach(p => p.CommentsCount = p.Comments.AsQueryable().Count());
+            
             return View(issues);
         }
 

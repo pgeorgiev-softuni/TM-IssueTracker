@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
 using System.Web;
 
@@ -31,5 +32,8 @@ namespace TM_IssueTracker.Models
         public Project Project { get; set; }
 
         public ICollection<Comment> Comments { get; set; }
+
+        [NotMapped]
+        public int CommentsCount { get; set; }
     }
 }

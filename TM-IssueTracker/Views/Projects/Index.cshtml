@@ -41,7 +41,7 @@
             @Html.DisplayFor(modelItem => item.CreatedOn)
         </td>
         <td>
-            @Html.RouteLink("Issues", "Issues", new { pid = item.Id }) |
+            @Html.RouteLink(string.Format("Issues ({0})", item.IssuesCount) , "Issues", new { pid = item.Id }) |
             @Html.ActionLink("Edit", "Edit", new { id=item.Id }) |
             @Html.ActionLink("Details", "Details", new { id=item.Id }) |
             @Html.ActionLink("Delete", "Delete", new { id=item.Id })
