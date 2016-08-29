@@ -1,8 +1,12 @@
 ﻿@model IEnumerable<TM_IssueTracker.Models.Issue>
+@using PagedList.Mvc;
+@using PagedList;
 
 @{
     ViewBag.Title = "Index";
 }
+
+<link href="/Content/PagedList.css" rel="stylesheet" type="text/css" />
 
 <h2>Issues</h2>
 <p>
@@ -14,7 +18,7 @@
         <tr>
             <th>
                 @Html.DisplayNameFor(model => model.Title)
-                @Html.Editor("search", new { htmlAttributes = new { @class = "form-control", @style = "display: inline; width: 130px; height: 22px; padding: 1px 2px;" } })
+                @Html.TextBox("search", ViewBag.FilterSearch as string, new { @class = "form-control", @style = "display: inline; width: 130px; height: 22px; padding: 1px 2px;" } )
             </th>
             <th>
                 @Html.DisplayNameFor(model => model.Description)
@@ -28,7 +32,7 @@
             <th colspan="2">
                 @Html.DisplayNameFor(model => model.State)
 
-                @Html.DropDownList("State", new SelectList(ViewBag.States, "Id", "Name", ViewBag.StateId), new
+                @Html.DropDownList("state", new SelectList(ViewBag.States, "Id", "Name", ViewBag.StateId), new
            {
                onchange = "this.form.submit();",
                @class = "form-control",
@@ -69,14 +73,17 @@
                 </td>
                 <td>
                     @Html.RouteLink(string.Format("Comments ({0})", item.CommentsCount), "Comments", new { pid = item.Project.Id, sid = item.Id }) |
-                    @Html.ActionLink("Edit", "Edit", new { id = item.Id }) |
-                    @Html.ActionLink("Details", "Details", new { id = item.Id }) |
-                    @Html.ActionLink("Delete", "Delete", new { id = item.Id })
+                    @Html.ActionLink("Edit", "Edit", new { id = item.Id, search = ViewBag.FilterSearch, state = ViewBag.StateId }) |
+                    @Html.ActionLink("Details", "Details", new { id = item.Id, search = ViewBag.FilterSearch, state = ViewBag.StateId }) |
+                    @Html.ActionLink("Delete", "Delete", new { id = item.Id, search = ViewBag.FilterSearch, state = ViewBag.StateId })
                 </td>
             </tr>
         }        
     </table>
 }
+
+@Html.PagedListPager((IPagedList)Model, page => Url.Action("Index", new { page, search = ViewBag.FilterSearch, state = ViewBag.StateId }))
+
     <p>
         @Html.RouteLink("Back to Projects", "Projects", new { controller = "Projects", action = "Index" })
     </p>

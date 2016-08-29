@@ -1,8 +1,12 @@
 ﻿@model IEnumerable<TM_IssueTracker.Models.Comment>
+@using PagedList.Mvc;
+@using PagedList;
 
 @{
     ViewBag.Title = "Index";
 }
+
+<link href="/Content/PagedList.css" rel="stylesheet" type="text/css" />
 
 <h2>Comments</h2>
 
@@ -43,6 +47,9 @@
 }
 
 </table>
+
+@Html.PagedListPager((IPagedList)Model, page => Url.Action("Index", new { page }))
+
 <p>
     @Html.RouteLink("Back to Issues", "Issues", new { pid = ((TM_IssueTracker.Models.Project)(ViewBag.Project)).Id })
 </p>

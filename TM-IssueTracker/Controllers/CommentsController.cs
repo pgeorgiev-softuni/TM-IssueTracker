@@ -9,6 +9,8 @@ using System.Web.Mvc;
 using TM_IssueTracker.Classes;
 using TM_IssueTracker.Models;
 using TM_IssueTracker.ViewModels;
+using PagedList;
+using System.Configuration;
 
 namespace TM_IssueTracker.Controllers
 {
@@ -27,10 +29,11 @@ namespace TM_IssueTracker.Controllers
 
         // GET: Comments
         [AllowAnonymous]
-        public ActionResult Index(int pid, int sid)
+        public ActionResult Index(int pid, int sid, int? page)
         {
             IncludeProjectAndIssue(pid, sid);
-            var comms = db.Comments.Include(p => p.Issue).Where(p => p.Issue.Id == sid).OrderByDescending(p => p.CreatedOn).ToList();
+            var pageNumber = page ?? 1;
+            var comms = db.Comments.Include(p => p.Issue).Where(p => p.Issue.Id == sid).OrderByDescending(p => p.CreatedOn).ToPagedList(pageNumber, int.Parse(ConfigurationManager.AppSettings["PageSize"]));
             return View(comms);
         }
 

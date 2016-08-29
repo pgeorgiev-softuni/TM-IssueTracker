@@ -1,8 +1,12 @@
 ﻿@model IEnumerable<TM_IssueTracker.Models.Project>
+@using PagedList.Mvc;
+@using PagedList;
 
 @{
     ViewBag.Title = "Index";
 }
+
+<link href="/Content/PagedList.css" rel="stylesheet" type="text/css" />
 
 <h2>Projects</h2>
 
@@ -50,3 +54,5 @@
 }
 
 </table>
+
+@Html.PagedListPager((IPagedList)Model, page => Url.Action("Index", new { page }))

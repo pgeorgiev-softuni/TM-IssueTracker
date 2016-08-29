@@ -9,6 +9,8 @@ using System.Web.Mvc;
 using TM_IssueTracker.Classes;
 using TM_IssueTracker.Models;
 using TM_IssueTracker.ViewModels;
+using PagedList;
+using System.Configuration;
 
 namespace TM_IssueTracker.Controllers
 {
@@ -27,10 +29,16 @@ namespace TM_IssueTracker.Controllers
 
         // GET: Projects
         [AllowAnonymous]
-        public ActionResult Index()
-        {
-            var projects = db.Projects.Include(p => p.CreatedBy).Include(p => p.Issues).OrderByDescending(p => p.CreatedOn).ToList();
-            projects.ForEach(p => p.IssuesCount = p.Issues.AsQueryable().Count());
+        public ActionResult Index(int? page)
+        {            
+            var pageNumber = page ?? 1;
+            var projects = db.Projects.Include(p => p.CreatedBy).Include(p => p.Issues).OrderByDescending(p => p.CreatedOn).ToPagedList(pageNumber, int.Parse(ConfigurationManager.AppSettings["PageSize"]));
+
+            foreach (Project p in projects)
+            {
+                p.IssuesCount = p.Issues.AsQueryable().Count();
+            }
+
             return View(projects);
         }
 
@@ -69,7 +77,8 @@ namespace TM_IssueTracker.Controllers
             {
                 var user = db.Users.Where(p => p.UserName == User.Identity.Name).FirstOrDefault();
 
-                db.Projects.Add(new Project() {
+                db.Projects.Add(new Project()
+                {
                     Name = project.Name,
                     CreatedOn = DateTime.Now,
                     CreatedBy = user,

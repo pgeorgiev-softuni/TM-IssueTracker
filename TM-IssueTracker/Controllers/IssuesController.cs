@@ -9,6 +9,8 @@ using System.Web.Mvc;
 using TM_IssueTracker.Classes;
 using TM_IssueTracker.Models;
 using TM_IssueTracker.ViewModels;
+using PagedList;
+using System.Configuration;
 
 namespace TM_IssueTracker.Controllers
 {
@@ -35,37 +37,47 @@ namespace TM_IssueTracker.Controllers
 
         // GET: Issues
         [AllowAnonymous]
-        public ActionResult Index(int pid, int? state, string search)
+        public ActionResult Index(int pid, int? state, string search, int? page)
         {
             IncludeProject(pid);
+            var pageNumber = page ?? 1;
+
             var states = db.IssueStates.ToList();
             states.Insert(0, new IssueState() { Id = 0, Name = "All" });
             ViewBag.States = states;
 
-            List<TM_IssueTracker.Models.Issue> issues = null;
+            ViewBag.FilterSearch = search;
 
-            if (state == null) {
+            IEnumerable<TM_IssueTracker.Models.Issue> issues = null;
+
+            if (state == null)
+            {
                 state = 0;
             }
 
             if ((int)state > 0)
             {
                 ViewBag.StateId = state;
-                issues = db.Issues.Include(p => p.Comments).Include(p => p.Project).Include(p => p.State).Where(p => p.Project.Id == pid && p.State.Id == state).Include(p => p.CreatedBy).OrderByDescending(p => p.CreatedOn).ToList();
+                issues = db.Issues.Include(p => p.Comments).Include(p => p.Project).Include(p => p.State).Where(p => p.Project.Id == pid && p.State.Id == state).Include(p => p.CreatedBy).OrderByDescending(p => p.CreatedOn);
             }
             else
             {
                 ViewBag.StateId = 0;
-                issues = db.Issues.Include(p => p.Comments).Include(p => p.Project).Include(p => p.State).Where(p => p.Project.Id == pid).Include(p => p.CreatedBy).OrderByDescending(p => p.CreatedOn).ToList();
+                issues = db.Issues.Include(p => p.Comments).Include(p => p.Project).Include(p => p.State).Where(p => p.Project.Id == pid).Include(p => p.CreatedBy).OrderByDescending(p => p.CreatedOn);
             }
 
-            if (search != null && search != "") {
-                issues = issues.Where(p => p.Title.ToLower().IndexOf(search.ToLower()) >= 0).ToList();
+            if (search != null && search != "")
+            {
+                issues = issues.Where(p => p.Title.ToLower().IndexOf(search.ToLower()) >= 0);
             }
 
-            
-            issues.ForEach(p => p.CommentsCount = p.Comments.AsQueryable().Count());
-            
+            issues = issues.ToPagedList(pageNumber, int.Parse(ConfigurationManager.AppSettings["PageSize"]));
+
+            foreach (Issue i in issues)
+            {
+                i.CommentsCount = i.Comments.AsQueryable().Count();
+            };
+
             return View(issues);
         }
 
