@@ -42,6 +42,13 @@ namespace TM_IssueTracker.Controllers
             IncludeProject(pid);
             var pageNumber = page ?? 1;
 
+            Session["Issues_vc"] = new PageInfo()
+            {
+                Page = page,
+                State = state,
+                Search = search
+            };
+
             var states = db.IssueStates.ToList();
             states.Insert(0, new IssueState() { Id = 0, Name = "All" });
             ViewBag.States = states;

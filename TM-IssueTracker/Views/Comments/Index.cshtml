@@ -51,5 +51,5 @@
 @Html.PagedListPager((IPagedList)Model, page => Url.Action("Index", new { page }))
 
 <p>
-    @Html.RouteLink("Back to Issues", "Issues", new { pid = ((TM_IssueTracker.Models.Project)(ViewBag.Project)).Id })
+    @Html.RouteLink("Back to Issues", "Issues", new { pid = ((TM_IssueTracker.Models.Project)(ViewBag.Project)).Id, state = ((TM_IssueTracker.Classes.PageInfo)Session["Issues_vc"]).State, page = ((TM_IssueTracker.Classes.PageInfo)Session["Issues_vc"]).Page, search = ((TM_IssueTracker.Classes.PageInfo)Session["Issues_vc"]).Search })
 </p>
