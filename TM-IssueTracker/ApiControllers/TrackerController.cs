@@ -36,13 +36,13 @@ namespace TM_IssueTracker.ApiControllers
         [Route("api/Tracker/NewestProjects")]
         public IQueryable GetNewestProjects()
         {
-            return db.Projects.OrderByDescending(p => p.CreatedOn).Take(3).Include(p => p.CreatedBy).Select(p => new { Name = p.Name, CreatedOn = p.CreatedOn, CreatedBy = p.CreatedBy.UserName });
+            return db.Projects.OrderByDescending(p => p.CreatedOn).Take(3).Include(p => p.CreatedBy).Select(p => new { Name = p.Name, CreatedOn = p.CreatedOn, CreatedBy = p.CreatedBy.UserName, Id = p.Id });
         }
 
         [Route("api/Tracker/NewestIssues")]
         public IQueryable GetNewestIssues()
         {
-            return db.Issues.OrderByDescending(p => p.CreatedOn).Take(3).Include(p => p.CreatedBy).Include(p => p.Project).Select(p => new { Title = p.Title, CreatedOn = p.CreatedOn, CreatedBy = p.CreatedBy.UserName, ProjectId = p.Project.Id, Project = p.Project.Name, Id = p.Id });
+            return db.Issues.OrderByDescending(p => p.CreatedOn).ThenBy(p => p.Title).Take(3).Include(p => p.CreatedBy).Include(p => p.Project).Select(p => new { Title = p.Title, CreatedOn = p.CreatedOn, CreatedBy = p.CreatedBy.UserName, ProjectId = p.Project.Id, Project = p.Project.Name, Id = p.Id });
         }
 
         [Route("api/Tracker/MostCommentedIssues")]

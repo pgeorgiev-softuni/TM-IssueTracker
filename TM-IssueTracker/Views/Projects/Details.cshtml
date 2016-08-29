@@ -37,6 +37,7 @@
     </dl>
 </div>
 <p>
+    @Html.RouteLink("Issues", "Issues", new { pid = Model.Id, controller = "Issues", action = "Index" }) |
     @Html.ActionLink("Edit", "Edit", new { id = Model.Id }) |
     @Html.ActionLink("Back to List", "Index")
 </p>

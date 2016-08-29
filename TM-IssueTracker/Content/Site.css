@@ -22,3 +22,13 @@ select,
 textarea {
     max-width: 280px;
 }
+
+.ProjectTitle {
+    font-weight: bold
+}
+
+.ProjectInfo {
+    font-weight: normal;
+    color: slategrey;
+    font-size: 12px;
+}
