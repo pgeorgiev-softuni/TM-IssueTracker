@@ -17,7 +17,7 @@ namespace TM_IssueTracker.Models
         [Required]
         public string CreatedBy { get; set; }
 
-        [Required]
+        [Required] 
         public DateTime CreatedOn { get; set; }
 
         [Required]
