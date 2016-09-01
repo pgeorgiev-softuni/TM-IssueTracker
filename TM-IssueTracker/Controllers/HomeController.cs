@@ -15,7 +15,7 @@ namespace TM_IssueTracker.Controllers
 
         public ActionResult About()
         {
-            ViewBag.Message = "Your application description page.";
+            ViewBag.Message = "Practical Project Assignment for the Software Technologies Course @ SoftUni.";
 
             return View();
         }

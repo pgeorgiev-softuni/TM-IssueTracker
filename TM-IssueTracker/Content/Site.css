@@ -32,3 +32,13 @@ textarea {
     color: slategrey;
     font-size: 12px;
 }
+
+.container .jumbotron, .container-fluid .jumbotron {
+    padding-right: 30px;
+    padding-left: 60px;
+}
+
+.jumbotron {
+    padding-top: 24px;
+    padding-bottom: 24px;
+}

@@ -3,40 +3,92 @@
 }
 
 <div class="jumbotron">
-    <h1>ASP.NET</h1>
-    <p class="lead">ASP.NET is a free web framework for building great Web sites and Web applications using HTML, CSS and JavaScript.</p>
-    <p><a href="http://asp.net" class="btn btn-primary btn-lg">Learn more &raquo;</a></p>
+    <h1>ISSUE TRACKER</h1>
+    <p class="lead">All bugs have one home - our ASP.NET 5 based issue tracking system!</p>
 </div>
 
 <div class="row">
     <div class="col-md-4">
         <h2>Newest Projects</h2>
-        <p id = "NewestProjects">
+        <div id = "NewestProjects">
             <p id="NewestProjects-indicator">Loading...</p>
             <p id="NewestProjects-data"></p>
-        </p>
-        <p><a class="btn btn-default" href="http://go.microsoft.com/fwlink/?LinkId=301865">Learn more &raquo;</a></p>
+        </div>
+        <p><a class="btn btn-default" href="Projects">All projects &raquo;</a></p>
     </div>
     <div class="col-md-4">
         <h2>Newest Issues</h2>
-        <p>NuGet is a free Visual Studio extension that makes it easy to add, remove, and update libraries and tools in Visual Studio projects.</p>
-        <p><a class="btn btn-default" href="http://go.microsoft.com/fwlink/?LinkId=301866">Learn more &raquo;</a></p>
+        <div id="NewestIssues">
+            <p id="NewestIssues-indicator">Loading...</p>
+            <p id="NewestIssues-data"></p>
+        </div>        
     </div>
     <div class="col-md-4">
         <h2>Most commented issues</h2>
-        <p>You can easily find a web hosting company that offers the right mix of features and price for your applications.</p>
-        <p><a class="btn btn-default" href="http://go.microsoft.com/fwlink/?LinkId=301867">Learn more &raquo;</a></p>
+        <div id="MostCommentedIssues">
+            <p id="MostCommentedIssues-indicator">Loading...</p>
+            <p id="MostCommentedIssues-data"></p>
+        </div>    
     </div>
 </div>
 
 @section Scripts {
     <script>
+
+        function ProcessNewestIssues(data) {
+            $("#NewestIssues-indicator").css("display", "none");
+            var p = $("#NewestIssues-data");
+                    
+            $.each(data, function (index, value) {
+                var project = $("<p>").attr("name", "NewestIssues-data-project");
+                project.append(
+                $("<a>", { href: "Projects/" + value.ProjectId + "/Issues/details/" + value.Id }).addClass("ProjectTitle").text(value.Title),
+                $("<div>").append(
+                    $("<a>", { href: "Projects/details/" + value.ProjectId }).addClass("ProjectInfo").css("color", "#337ab7").text("Project - " + value.Project)
+                ),
+                $("<div>").addClass("ProjectInfo").text("Created by " + value.CreatedBy),
+                $("<div>").addClass("ProjectInfo").text("Created on " + value.CreatedOn.replace(/T/gi, " ").replace(/\..*/g, ""))
+                );
+                p.append(project);
+            });
+        };
+
+        function ProcessMostCommentedIssues(data) {
+            $("#MostCommentedIssues-indicator").css("display", "none");
+            var p = $("#MostCommentedIssues-data");
+
+            $.each(data, function (index, value) {
+                var project = $("<p>").attr("name", "MostCommentedIssues-data-project");
+                project.append(
+                $("<a>", { href: "Projects/" + value.ProjectId + "/Issues/details/" + value.Id }).addClass("ProjectTitle").text(value.Title),
+                $("<div>").append(
+                    $("<a>", { href: "Projects/details/" + value.ProjectId }).addClass("ProjectInfo").css("color", "#337ab7").text("Project - " + value.Project)
+                ),
+                $("<div>").addClass("ProjectInfo").text("Created by " + value.CreatedBy),
+                $("<div>").addClass("ProjectInfo").text("Created on " + value.CreatedOn.replace(/T/gi, " ").replace(/\..*/g, ""))
+                );
+                p.append(project);
+            });
+        };
+
         $(function () {
+
+            $.get("api/Tracker/NewestIssues")
+                .done(ProcessNewestIssues)
+                .fail(function () {
+                    $("#NewestIssues-indicator").text("Error loading content");
+                });
+
+            $.get("api/Tracker/MostCommentedIssues")
+                .done(ProcessMostCommentedIssues)
+                .fail(function () {
+                    $("#MostCommentedIssues-indicator").text("Error loading content");
+                });
+
+
             $.get("api/Tracker/NewestProjects")
                 .done(function (data) {
-                    $("#NewestProjects-indicator").text("");
-                    
-                    
+                    $("#NewestProjects-indicator").css("display", "none");
                     var p = $("#NewestProjects-data");
                     
                     $.each(data, function (index, value) {

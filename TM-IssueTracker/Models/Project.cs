@@ -20,6 +20,7 @@ namespace TM_IssueTracker.Models
         public string Description { get; set; }
 
         [Required]
+        [DisplayFormat(ApplyFormatInEditMode = true, DataFormatString = "{0:yyyy-dd-MM HH:mm}")]
         public DateTime CreatedOn { get; set; }
 
         [Required]

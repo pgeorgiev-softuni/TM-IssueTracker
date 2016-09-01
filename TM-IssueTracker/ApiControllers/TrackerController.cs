@@ -48,7 +48,7 @@ namespace TM_IssueTracker.ApiControllers
         [Route("api/Tracker/MostCommentedIssues")]
         public IQueryable GetMostCommentedIssues()
         {
-            var tmp = db.Comments.GroupBy(p => p.Issue).OrderByDescending(p => p.Key.Comments.Count()).ThenBy(p => p.Key.Title).Select(p => new { issue = p.Key, ccount = p.Count() }).Include(p => p.issue.CreatedBy).Include(p => p.issue.Project).Select(p => new { Title = p.issue.Title, CreatedOn = p.issue.CreatedOn, CreatedBy = p.issue.CreatedBy.UserName, ProjectId = p.issue.Project.Id, Project = p.issue.Project.Name, Id = p.issue.Id, ccount = p.ccount });
+            var tmp = db.Comments.GroupBy(p => p.Issue).OrderByDescending(p => p.Key.Comments.Count()).ThenBy(p => p.Key.Title).Take(3).Select(p => new { issue = p.Key, ccount = p.Count() }).Include(p => p.issue.CreatedBy).Include(p => p.issue.Project).Select(p => new { Title = p.issue.Title, CreatedOn = p.issue.CreatedOn, CreatedBy = p.issue.CreatedBy.UserName, ProjectId = p.issue.Project.Id, Project = p.issue.Project.Name, Id = p.issue.Id, ccount = p.ccount });
             
             return tmp;
         }
