@@ -22,11 +22,11 @@ namespace TM_IssueTracker.Classes
 
             // CHANGE TO YOUR USER MANAGER
 
-            var principal = new GenericPrincipal(new GenericIdentity("Admin1@foo.com"), new[] { "admin" });
+            /*var principal = new GenericPrincipal(new GenericIdentity("Admin1@foo.com"), new[] { "admin" });
 
             Thread.CurrentPrincipal = principal;
             HttpContext.Current.User = principal;
-
+            */
             base.OnAuthorization(filterContext);
         }
     }
