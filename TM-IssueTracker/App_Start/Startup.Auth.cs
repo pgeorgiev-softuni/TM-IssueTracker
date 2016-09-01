@@ -6,6 +6,10 @@ using Microsoft.Owin.Security.Cookies;
 using Microsoft.Owin.Security.Google;
 using Owin;
 using TM_IssueTracker.Models;
+using System.IO;
+using System.Web.Hosting;
+using Newtonsoft.Json;
+using TM_IssueTracker.Classes;
 
 namespace TM_IssueTracker
 {
@@ -58,11 +62,20 @@ namespace TM_IssueTracker
             //   appId: "",
             //   appSecret: "");
 
-            //app.UseGoogleAuthentication(new GoogleOAuth2AuthenticationOptions()
-            //{
-            //    ClientId = "",
-            //    ClientSecret = ""
-            //});
+            
+            string path = HostingEnvironment.MapPath("~/App_Data/auth.googlecreds");
+            if (File.Exists(path))
+            {
+                string content = File.ReadAllText(path);
+                GoogleCredentials gc = JsonConvert.DeserializeObject<GoogleCredentials>(content);
+
+                app.UseGoogleAuthentication(new GoogleOAuth2AuthenticationOptions()
+                {
+                    ClientId = gc.ClientId,
+                    ClientSecret = gc.ClientSecret
+                });
+
+            }
         }
     }
 }
